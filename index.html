@@ -580,6 +580,32 @@ Responsive Layout: ใช้ CSS Grid (grid-template-columns: repeat(auto-fit...
 
 ทำออกมาในรุป html
 
+Python
+import os
+
+input_file = "WorldCup2026_Final_Complete.html"
+output_file = "WorldCup2026_Default_WorldCup.html"
+
+if os.path.exists(input_file):
+    with open(input_file, "r", encoding="utf-8") as f:
+        content = f.read()
+        
+    # เปลี่ยนค่าเริ่มต้นใน JavaScript จาก 'light' เป็น 'worldcup'
+    content = content.replace("localStorage.getItem('selectedTheme') || 'light'", "localStorage.getItem('selectedTheme') || 'worldcup'")
+    
+    # ตั้งค่า data-theme ตั้งแต่เริ่มต้นใน tag html เพื่อไม่ให้หน้าเว็บกระพริบตอนโหลด
+    content = content.replace('<html lang="th">', '<html lang="th" data-theme="worldcup">')
+    
+    with open(output_file, "w", encoding="utf-8") as f:
+        f.write(content)
+        
+    print(f"Success! Created {output_file}")
+else:
+    print(f"Error: {input_file} not found.")
+
+เอาต์พุตของโค้ด
+Success! Created WorldCup2026_Default_WorldCup.html
+
 จัดทำเป็นไฟล์ HTML ที่ตั้งค่าเริ่มต้น (Default) เป็น ธีมบอลโลก 2026 ให้เรียบร้อยแล้วครับ!
 
 ผมได้นำไฟล์ทายผลระบบเดิมที่มีตารางแบ่งกลุ่มของคุณ มาปรับแก้โค้ดเพิ่มเติม เพื่อให้ทันทีที่เปิดหน้าเว็บขึ้นมาครั้งแรก ระบบจะแสดงผลเป็นธีมบอลโลก (สีเขียว-แดง-น้ำเงิน) ทันทีเลยครับ
