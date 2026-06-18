@@ -138,7 +138,8 @@
     <button class="tab" onclick="switchTab('results',this)">⚙️ ผลการแข่งขัน (Admin)</button>
     <button class="tab" onclick="switchTab('board',this)">🏆 ผลคะแนน</button>
   
-    <button class="tab" onclick="switchTab('groups',this)">📊 ตารางแบ่งกลุ่ม</button></div>
+    <button class="tab" onclick="switchTab('groups',this)">📊 ตารางแบ่งกลุ่ม</button>    <button class="tab" onclick="resetAllData()" style="color: var(--btn-danger);">🗑️ ล้างข้อมูลทั้งหมด</button>
+  </div>
 
   <!-- TAB 1 -->
   <div id="page-predict" class="page active">
@@ -248,6 +249,24 @@ let nextId = 4;
 
 let TR = {};
 TEAMS.forEach(t=>{ TR[t]={r1:'',r2:'',r3:'',r4:'',r5:''}; });
+
+
+// ระบบ Auto Save (บันทึกข้อมูลลงเครื่อง)
+function saveData() {
+  localStorage.setItem('wc2026_players', JSON.stringify(players));
+  localStorage.setItem('wc2026_nextId', nextId);
+  localStorage.setItem('wc2026_TR', JSON.stringify(TR));
+}
+
+function loadData() {
+  const savedPlayers = localStorage.getItem('wc2026_players');
+  const savedNextId = localStorage.getItem('wc2026_nextId');
+  const savedTR = localStorage.getItem('wc2026_TR');
+  
+  if(savedPlayers) players = JSON.parse(savedPlayers);
+  if(savedNextId) nextId = parseInt(savedNextId);
+  if(savedTR) TR = JSON.parse(savedTR);
+}
 
 function teamPts(team){
   if(!team) return 0;
@@ -412,6 +431,7 @@ function setPick(id,idx,val){
     return;
   }
   p.picks[idx]=val;
+  saveData();
   renderPredict();
 }
 
@@ -421,6 +441,7 @@ function setResult(team,round,val){
     const ri=ROUNDS.indexOf(round);
     ROUNDS.slice(ri+1).forEach(r=>{TR[team][r]='';});
   }
+  saveData();
   renderResults();
   renderPredict();
 }
@@ -431,14 +452,17 @@ function addPlayer(){
   if(!name)return;
   players.push({id:nextId++,name,picks:['','','','','']});
   inp.value='';
+  saveData();
   renderPredict();
 }
 
 function removePlayer(id){
   players=players.filter(p=>p.id!==id);
+  saveData();
   renderPredict();
 }
 
+loadData();
 sanitizePlayers();
 renderPredict();
 renderResults();
@@ -459,6 +483,15 @@ window.addEventListener('DOMContentLoaded', () => {
   if (selector) selector.value = savedTheme;
   changeTheme(savedTheme);
 });
+
+function resetAllData() {
+  if(confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลทั้งหมด? (ชื่อผู้ทายและผลการแข่งจะหายไปทั้งหมด)')) {
+    localStorage.removeItem('wc2026_players');
+    localStorage.removeItem('wc2026_nextId');
+    localStorage.removeItem('wc2026_TR');
+    location.reload(); // โหลดหน้าใหม่เพื่อให้กลับเป็นค่าเริ่มต้น
+  }
+}
 </script>
 </body>
 </html>
