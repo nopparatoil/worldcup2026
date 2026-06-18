@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚽ World Cup 2026 – ระบบทายผล</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;font-size:14px;background:#f0f4f8;color:#1a1a2e;min-height:100vh}
+  header{background:linear-gradient(135deg,#1a3a5c,#2e75b6);color:#fff;padding:18px 24px;display:flex;align-items:center;justify-content:space-between}
+  header h1{font-size:20px;font-weight:600}
+  header .pts-legend{font-size:11px;opacity:.85;line-height:1.8;text-align:right}
+  .container{max-width:1100px;margin:0 auto;padding:20px 16px}
+  .tab-bar{display:flex;gap:4px;background:#fff;border-radius:10px;padding:6px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:20px}
+  .tab{flex:1;padding:9px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:500;color:#666;border-radius:7px;transition:.15s}
+  .tab.active{background:#1a3a5c;color:#fff}
+  .tab:hover:not(.active){background:#f0f4f8}
+  .page{display:none}.page.active{display:block}
+  .card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:20px;margin-bottom:16px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:#f7f9fc;padding:9px 10px;text-align:left;font-weight:600;font-size:12px;color:#555;border-bottom:1px solid #e8ecf0;white-space:nowrap}
+  td{padding:8px 10px;border-bottom:1px solid #f0f3f7;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#fafbfd}
+  select{font-size:12px;padding:4px 8px;border:1px solid #dde3ea;border-radius:6px;background:#fff;color:#333;cursor:pointer;outline:none}
+  select:focus{border-color:#2e75b6}
+  input[type=text]{font-size:13px;padding:7px 12px;border:1px solid #dde3ea;border-radius:7px;background:#fff;color:#333;outline:none;width:220px}
+  input[type=text]:focus{border-color:#2e75b6}
+  button.btn{padding:7px 16px;font-size:13px;border:none;border-radius:7px;cursor:pointer;font-weight:500;transition:.15s}
+  button.btn-primary{background:#1a3a5c;color:#fff}
+  button.btn-primary:hover{background:#2e75b6}
+  button.btn-sm{padding:3px 10px;font-size:12px;border-radius:5px;border:1px solid #dde3ea;background:#fff;color:#666;cursor:pointer}
+  button.btn-sm:hover{background:#fee;color:#c00;border-color:#fcc}
+  .badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600}
+  .b-pass{background:#e2efda;color:#375623}
+  .b-fail{background:#fce4e4;color:#a32d2d}
+  .b-wait{background:#f0f0f0;color:#777}
+  .b-champ{background:#ffd700;color:#7a4f00}
+  .summary-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px}
+  .scard{background:#fff;border-radius:10px;padding:12px 10px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+  .scard-label{font-size:11px;color:#888;margin-bottom:5px}
+  .scard-val{font-size:22px;font-weight:700;color:#1a3a5c}
+  .pts-col{font-weight:700;color:#2e75b6;text-align:center}
+  .total-col{font-weight:700;color:#375623;font-size:14px;text-align:center}
+  .rank-col{text-align:center;font-weight:700;font-size:14px}
+  .lb-1 td{background:#fffbea}
+  .lb-2 td{background:#f8f8f8}
+  .lb-3 td{background:#fff5f0}
+  .team-select{width:140px}
+  .add-row{display:flex;gap:10px;align-items:center;margin-bottom:16px}
+  .hint{font-size:11px;color:#aaa;margin-top:8px}
+  .champ-banner{background:linear-gradient(90deg,#ffd700,#ffa500);color:#7a4f00;border-radius:10px;padding:12px 18px;font-weight:700;font-size:15px;margin-bottom:16px;text-align:center}
+  .no-champ-banner{background:#f7f9fc;color:#888;border-radius:10px;padding:10px 18px;font-size:13px;margin-bottom:16px;text-align:center}
+  @media(max-width:600px){
+    .summary-grid{grid-template-columns:repeat(3,1fr)}
+    .team-select{width:110px}
+    header{flex-direction:column;gap:8px}
+    header .pts-legend{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>⚽ FIFA World Cup 2026</h1>
+    <div style="font-size:13px;opacity:.8;margin-top:3px">ระบบทายผลรอบ 48 ทีม</div>
+  </div>
+  <div class="pts-legend">
+    48→32 = 1pt &nbsp;|&nbsp; 32→16 = 2pt<br>
+    16→8 = 3pt &nbsp;|&nbsp; 8→4 = 5pt &nbsp;|&nbsp; แชมป์ = 10pt
+  </div>
+</header>
+
+<div class="container">
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('predict',this)">📋 บันทึกการทาย</button>
+    <button class="tab" onclick="switchTab('results',this)">⚙️ ผลการแข่งขัน (Admin)</button>
+    <button class="tab" onclick="switchTab('board',this)">🏆 ผลคะแนน</button>
+  </div>
+
+  <!-- TAB 1 -->
+  <div id="page-predict" class="page active">
+    <div class="card">
+      <div class="add-row">
+        <input type="text" id="new-name" placeholder="ชื่อผู้เข้าร่วม..." onkeydown="if(event.key==='Enter')addPlayer()">
+        <button class="btn btn-primary" onclick="addPlayer()">+ เพิ่มผู้ทาย</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th style="width:36px">#</th>
+            <th style="min-width:130px">ชื่อ</th>
+            <th>ทีม 1</th><th>ทีม 2</th><th>ทีม 3</th><th>ทีม 4</th><th>ทีม 5</th>
+            <th style="text-align:center;min-width:80px">คะแนนรวม</th>
+            <th style="width:40px"></th>
+          </tr></thead>
+          <tbody id="predict-body"></tbody>
+        </table>
+      </div>
+      <p class="hint">* คะแนนคำนวณอัตโนมัติจากผลในแท็บ "ผลการแข่งขัน"</p>
+    </div>
+  </div>
+
+  <!-- TAB 2 -->
+  <div id="page-results" class="page">
+    <div class="summary-grid">
+      <div class="scard"><div class="scard-label">ทีมทั้งหมด</div><div class="scard-val" id="s-total">48</div></div>
+      <div class="scard"><div class="scard-label">ผ่านรอบ 48→32</div><div class="scard-val" id="s-r1">0</div></div>
+      <div class="scard"><div class="scard-label">ผ่านรอบ 32→16</div><div class="scard-val" id="s-r2">0</div></div>
+      <div class="scard"><div class="scard-label">รอบ 4 ทีม</div><div class="scard-val" id="s-r4">0</div></div>
+      <div class="scard"><div class="scard-label">แชมป์</div><div class="scard-val" id="s-champ" style="font-size:13px;padding-top:4px">-</div></div>
+    </div>
+    <div class="card" style="overflow-x:auto">
+      <table>
+        <thead><tr>
+          <th style="min-width:150px">ทีม</th>
+          <th style="text-align:center">รอบ 48→32<br><small style="font-weight:400;color:#999">(1pt)</small></th>
+          <th style="text-align:center">รอบ 32→16<br><small style="font-weight:400;color:#999">(2pt)</small></th>
+          <th style="text-align:center">รอบ 16→8<br><small style="font-weight:400;color:#999">(3pt)</small></th>
+          <th style="text-align:center">รอบ 8→4<br><small style="font-weight:400;color:#999">(5pt)</small></th>
+          <th style="text-align:center">แชมป์<br><small style="font-weight:400;color:#999">(10pt)</small></th>
+          <th style="text-align:center">pts</th>
+        </tr></thead>
+        <tbody id="results-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3 -->
+  <div id="page-board" class="page">
+    <div id="board-content"></div>
+  </div>
+</div>
+
+<script>
+const TEAMS = [
+  // Group A
+  "Mexico","South Africa","Korea Republic","Czechia",
+  // Group B
+  "Canada","Bosnia and Herzegovina","Qatar","Switzerland",
+  // Group C
+  "Brazil","Morocco","Haiti","Scotland",
+  // Group D
+  "USA","Paraguay","Australia","Türkiye",
+  // Group E
+  "Germany","Curaçao","Côte d'Ivoire","Ecuador",
+  // Group F
+  "Netherlands","Japan","Sweden","Tunisia",
+  // Group G
+  "Belgium","Egypt","IR Iran","New Zealand",
+  // Group H
+  "Spain","Cabo Verde","Saudi Arabia","Uruguay",
+  // Group I
+  "France","Senegal","Iraq","Norway",
+  // Group J
+  "Argentina","Algeria","Austria","Jordan",
+  // Group K
+  "Portugal","Congo DR","Uzbekistan","Colombia",
+  // Group L
+  "England","Croatia","Ghana","Panama"
+];
+
+const ROUNDS = ['r1','r2','r3','r4','r5'];
+const ROUND_PTS = {r1:1,r2:2,r3:3,r4:5,r5:10};
+
+let players = [
+  {id:1,name:'สมชาย ใจดี',picks:['Brazil','Argentina','France','','']},
+  {id:2,name:'สมหญิง รักไทย',picks:['Germany','Spain','England','','']},
+  {id:3,name:'อนุชา บุญมา',picks:['Japan','South Korea','','','']},
+];
+let nextId = 4;
+
+let TR = {};
+TEAMS.forEach(t=>{ TR[t]={r1:'',r2:'',r3:'',r4:'',r5:''}; });
+
+function teamPts(team){
+  if(!team) return 0;
+  return ROUNDS.reduce((s,r)=> s + (TR[team]&&TR[team][r]==='ผ่าน'?ROUND_PTS[r]:0), 0);
+}
+function playerTotal(p){ return p.picks.reduce((s,t)=>s+teamPts(t),0); }
+
+function teamOpts(sel){
+  return '<option value="">— เลือกทีม —</option>' +
+    TEAMS.map(t=>`<option value="${t}"${t===sel?' selected':''}>${t}</option>`).join('');
+}
+
+function renderPredict(){
+  document.getElementById('predict-body').innerHTML = players.map((p,i)=>{
+    const tot = playerTotal(p);
+    const picks = p.picks.map((pk,pi)=>
+      `<td><select class="team-select" onchange="setPick(${p.id},${pi},this.value)">${teamOpts(pk)}</select></td>`
+    ).join('');
+    return `<tr>
+      <td style="color:#aaa">${i+1}</td>
+      <td><strong>${p.name}</strong></td>
+      ${picks}
+      <td class="total-col">${tot}</td>
+      <td><button class="btn-sm" onclick="removePlayer(${p.id})" title="ลบ">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderResults(){
+  document.getElementById('results-body').innerHTML = TEAMS.map(team=>{
+    const pts = teamPts(team);
+    const cells = ROUNDS.map((r,i)=>{
+      const v = TR[team][r];
+      const prev = i===0?null:ROUNDS[i-1];
+      const ok = !prev || TR[team][prev]==='ผ่าน';
+      if(!ok) return `<td style="text-align:center"><span class="badge b-fail">ตก</span></td>`;
+      let badge = v==='ผ่าน'?`<span class="badge b-pass">ผ่าน</span>`:v==='ตก'?`<span class="badge b-fail">ตก</span>`:'';
+      return `<td style="text-align:center">
+        <select style="font-size:11px;padding:3px 6px" onchange="setResult('${team}','${r}',this.value)">
+          <option value="">—</option>
+          <option value="ผ่าน"${v==='ผ่าน'?' selected':''}>ผ่าน</option>
+          <option value="ตก"${v==='ตก'?' selected':''}>ตก</option>
+        </select>
+        ${badge}
+      </td>`;
+    }).join('');
+    return `<tr><td><strong>${team}</strong></td>${cells}<td class="pts-col">${pts}</td></tr>`;
+  }).join('');
+  updateSummary();
+}
+
+function updateSummary(){
+  document.getElementById('s-r1').textContent = TEAMS.filter(t=>TR[t].r1==='ผ่าน').length;
+  document.getElementById('s-r2').textContent = TEAMS.filter(t=>TR[t].r2==='ผ่าน').length;
+  document.getElementById('s-r4').textContent = TEAMS.filter(t=>TR[t].r4==='ผ่าน').length;
+  const ch = TEAMS.find(t=>TR[t].r5==='ผ่าน');
+  document.getElementById('s-champ').textContent = ch||'-';
+}
+
+function renderBoard(){
+  const champ = TEAMS.find(t=>TR[t].r5==='ผ่าน')||'';
+  const banner = champ
+    ? `<div class="champ-banner">🏆 แชมป์โลก 2026 คือ ${champ}!</div>`
+    : `<div class="no-champ-banner">⏳ ยังไม่ประกาศผลแชมป์</div>`;
+
+  const sorted = [...players].filter(p=>p.name)
+    .map(p=>({...p,total:playerTotal(p)}))
+    .sort((a,b)=>b.total-a.total);
+
+  const rows = sorted.map((p,i)=>{
+    const rank=i+1;
+    const cls = rank===1?'lb-1':rank===2?'lb-2':rank===3?'lb-3':'';
+    const medal = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
+    const passed = p.picks.filter(t=>t&&teamPts(t)>0).length;
+    const hasChamp = champ&&p.picks.includes(champ);
+    const status = hasChamp
+      ? `<span class="badge b-champ">🏆 ได้แชมป์!</span>`
+      : passed>0 ? `<span class="badge b-pass">${passed} ทีมผ่าน</span>`
+      : `<span class="badge b-wait">รอผล</span>`;
+    const picksStr = p.picks.filter(Boolean).join(' · ')||'-';
+    return `<tr class="${cls}">
+      <td class="rank-col">${medal} ${rank}</td>
+      <td><strong>${p.name}</strong></td>
+      <td style="font-size:12px;color:#777">${picksStr}</td>
+      <td style="text-align:center;font-size:16px;font-weight:700;color:#2e75b6">${p.total}</td>
+      <td style="text-align:center">${status}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('board-content').innerHTML = banner + `
+  <div class="card" style="overflow-x:auto">
+  <table>
+    <thead><tr>
+      <th style="width:70px;text-align:center">อันดับ</th>
+      <th>ชื่อ</th>
+      <th>ทีมที่เลือก</th>
+      <th style="text-align:center">คะแนน</th>
+      <th style="text-align:center">สถานะ</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  </div>`;
+}
+
+function switchTab(t, btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('page-'+t).classList.add('active');
+  if(t==='board') renderBoard();
+  if(t==='results') renderResults();
+  if(t==='predict') renderPredict();
+}
+
+function setPick(id,idx,val){
+  const p=players.find(x=>x.id===id);
+  if(p){p.picks[idx]=val;renderPredict();}
+}
+
+function setResult(team,round,val){
+  TR[team][round]=val;
+  if(val==='ตก'){
+    const ri=ROUNDS.indexOf(round);
+    ROUNDS.slice(ri+1).forEach(r=>{TR[team][r]='';});
+  }
+  renderResults();
+  renderPredict();
+}
+
+function addPlayer(){
+  const inp=document.getElementById('new-name');
+  const name=inp.value.trim();
+  if(!name)return;
+  players.push({id:nextId++,name,picks:['','','','','']});
+  inp.value='';
+  renderPredict();
+}
+
+function removePlayer(id){
+  players=players.filter(p=>p.id!==id);
+  renderPredict();
+}
+
+renderPredict();
+renderResults();
+</script>
+</body>
+</html>
