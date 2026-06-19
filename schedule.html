@@ -320,6 +320,7 @@ td{padding:9px 14px;vertical-align:middle}
     <button class="tab-btn" onclick="switchTab('groups',this)">🏆 กลุ่ม A–L</button>
     <button class="tab-btn" onclick="switchTab('knockout',this)">🔥 น็อคเอาท์</button>
     <button class="tab-btn" onclick="switchTab('live',this)">🔴 ผลบอล</button>
+    <button class="tab-btn" onclick="switchTab('watch',this)">📺 ดูบอลสด</button>
   </div>
 
   <!-- TAB MATCHES -->
@@ -387,7 +388,7 @@ td{padding:9px 14px;vertical-align:middle}
         <div style="font-size:11px;color:var(--gray-400);font-family:var(--mono)">หากไม่โหลด กด "เปิดใน FlashScore" ด้านบนครับ</div>
       </div>
       <iframe id="live-frame"
-        src="https://www.flashscore.com/football/world/world-cup/"
+        src="https://www.flashscore.com/football/world/world-cup/results/"
         style="width:100%;height:700px;border:none;display:block"
         onload="document.getElementById('live-loading').style.display='none'"
         allow="autoplay"
@@ -406,9 +407,28 @@ td{padding:9px 14px;vertical-align:middle}
     <p style="margin-top:10px;font-size:11px;color:var(--gray-400);font-family:var(--mono)">ผลบอลจาก flashscore.com · หากโดนบล็อคให้กด "เปิดใน FlashScore"</p>
   </div>
 
+  <!-- TAB WATCH -->
+  <div id="tab-watch" class="tab-panel">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:20px;text-align:center">
+      <div style="font-size:56px">📺</div>
+      <h2 style="font-size:20px;font-weight:600;color:var(--gray-800)">ดูบอลสด FIFA World Cup 2026</h2>
+      <p style="font-size:14px;color:var(--gray-600);max-width:400px">กดปุ่มด้านล่างเพื่อเปิดดูบอลสดที่ GoalDaddy ในหน้าใหม่ได้เลยครับ</p>
+      <a href="https://www.goaldaddythai.com/fifa-world-cup" target="_blank"
+        style="display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:var(--green-dark);color:#fff;border-radius:10px;font-size:15px;font-weight:600;text-decoration:none;transition:all 0.15s"
+        onmouseover="this.style.background='var(--green-mid)'"
+        onmouseout="this.style.background='var(--green-dark)'">
+        ▶ ดูบอลสดที่ GoalDaddy
+      </a>
+      <p style="font-size:11px;color:var(--gray-400);font-family:var(--mono)">goaldaddythai.com/fifa-world-cup · เปิดในหน้าใหม่</p>
+    </div>
+  </div>
+
   <style>
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
   </style>
+
+  <!-- TAB KNOCKOUT -->
+  <div id="tab-knockout" class="tab-panel">
     <div class="bracket-legend">
       <div class="bl-item"><div class="bl-dot" style="background:#1565C0"></div>รอบ 32 ทีม</div>
       <div class="bl-item"><div class="bl-dot" style="background:#6A1B9A"></div>รอบ 16 ทีม</div>
