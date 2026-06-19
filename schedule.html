@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตารางบอลโลก 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green-deep:#0A3D1F;
+  --green-dark:#0F5C2E;
+  --green-mid:#1A7A40;
+  --green-field:#2D9A56;
+  --green-light:#E8F5EE;
+  --green-pale:#F2FAF5;
+  --gold:#D4A843;
+  --gold-light:#F2C94C;
+  --gold-pale:#FDF8E7;
+  --white:#FFFFFF;
+  --gray-50:#F7F9F7;
+  --gray-100:#EEF2EE;
+  --gray-200:#D8E4D8;
+  --gray-400:#8EA88E;
+  --gray-600:#4E6A4E;
+  --gray-800:#1E321E;
+  --font:'IBM Plex Sans Thai',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+body{font-family:var(--font);background:var(--gray-50);color:var(--gray-800);font-size:14px;line-height:1.6;min-height:100vh}
+
+/* ===== HERO ===== */
+.hero{
+  background:var(--green-deep);
+  padding:0;
+  position:relative;
+  overflow:hidden;
+}
+/* grass stripes */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    180deg,
+    rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 28px,
+    transparent 28px, transparent 56px
+  );
+  pointer-events:none;
+}
+/* subtle arc like a stadium center circle */
+.hero::after{
+  content:'';position:absolute;
+  width:600px;height:600px;
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:50%;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.hero-inner{
+  max-width:1100px;margin:0 auto;padding:40px 24px 36px;
+  display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;
+  position:relative;z-index:1;
+}
+.hero-left{flex:1;min-width:260px}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:11px;letter-spacing:0.14em;
+  color:var(--gold);text-transform:uppercase;margin-bottom:14px;
+}
+.hero-eyebrow::before{content:'';display:block;width:20px;height:1px;background:var(--gold);}
+.hero-title{
+  font-size:42px;font-weight:700;color:var(--white);
+  line-height:1.1;margin-bottom:10px;
+  text-shadow:0 2px 12px rgba(0,0,0,0.4);
+}
+.hero-title span{color:var(--gold-light)}
+.hero-subtitle{font-size:14px;color:rgba(255,255,255,0.5);font-weight:300;letter-spacing:0.02em}
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:20px}
+.hero-stats{display:flex;gap:0}
+.stat{
+  text-align:center;padding:16px 22px;
+  border-right:1px solid rgba(255,255,255,0.08);
+}
+.stat:last-child{border-right:none}
+.stat-num{font-family:var(--mono);font-size:30px;font-weight:500;color:var(--gold-light);line-height:1}
+.stat-label{font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px;letter-spacing:0.05em}
+.hero-hosts{display:flex;gap:8px;align-items:center}
+.host-flag{font-size:22px}
+.host-sep{color:rgba(255,255,255,0.2);font-size:12px}
+
+/* pitch line accent */
+.pitch-bar{
+  height:4px;
+  background:linear-gradient(90deg, var(--green-field) 0%, var(--gold) 40%, var(--green-field) 100%);
+}
+
+/* ===== LAYOUT ===== */
+.container{max-width:1100px;margin:0 auto;padding:28px 24px}
+
+/* ===== TABS ===== */
+.tab-nav{
+  display:flex;gap:0;margin-bottom:24px;
+  background:var(--white);border:1px solid var(--gray-200);
+  border-radius:10px;padding:5px;width:fit-content;
+}
+.tab-btn{
+  padding:8px 20px;border:none;background:transparent;
+  border-radius:7px;font-family:var(--font);font-size:13px;font-weight:500;
+  color:var(--gray-600);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;
+}
+.tab-btn.active{background:var(--green-dark);color:var(--white)}
+.tab-btn:hover:not(.active){background:var(--green-pale)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ===== FILTER BAR ===== */
+.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.filter-bar input,.filter-bar select{
+  font-family:var(--font);font-size:13px;padding:8px 14px;
+  border:1px solid var(--gray-200);border-radius:8px;
+  background:var(--white);color:var(--gray-800);outline:none;transition:border 0.15s;
+}
+.filter-bar input:focus,.filter-bar select:focus{border-color:var(--green-mid)}
+.filter-bar input{flex:1;min-width:180px}
+.count-label{margin-left:auto;font-size:12px;color:var(--gray-400);font-family:var(--mono)}
+
+/* ===== TABLE ===== */
+.table-wrap{background:var(--white);border-radius:12px;border:1px solid var(--gray-200);overflow:hidden}
+.scroll-x{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:580px}
+thead th{
+  background:var(--green-deep);color:rgba(255,255,255,0.65);
+  font-size:11px;font-weight:500;letter-spacing:0.07em;text-transform:uppercase;
+  padding:10px 14px;text-align:left;white-space:nowrap;font-family:var(--mono);
+}
+tbody tr{border-bottom:1px solid var(--gray-100);transition:background 0.1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--green-pale)}
+td{padding:9px 14px;vertical-align:middle}
+.col-num{width:44px;font-family:var(--mono);font-size:12px;color:var(--gray-400)}
+.col-date{width:88px;font-size:12px;font-weight:500;color:var(--gray-800)}
+.col-time{width:64px;font-family:var(--mono);font-size:13px;color:var(--green-dark);font-weight:500}
+.col-teams{font-weight:600;font-size:13px}
+.col-stage{width:72px}
+.col-city{font-size:12px;color:var(--gray-600)}
+
+/* section row */
+.section-row td{
+  background:var(--green-deep);color:var(--gold);
+  font-size:11px;font-weight:600;letter-spacing:0.08em;
+  text-transform:uppercase;padding:8px 14px;font-family:var(--mono);
+}
+
+/* ===== BADGES ===== */
+.badge{display:inline-block;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap;font-family:var(--mono)}
+.badge-A{background:#E8F0FE;color:#1A4CD4}
+.badge-B{background:#E0F5F0;color:#0A5C45}
+.badge-C{background:#FEF3E2;color:#895000}
+.badge-D{background:#FDECEA;color:#9B2A1E}
+.badge-E{background:#EEE8FA;color:#3D2580}
+.badge-F{background:#E5F5E5;color:#145E14}
+.badge-G{background:#FDF4DC;color:#7A5300}
+.badge-H{background:#FCE8F3;color:#8B1F60}
+.badge-I{background:#E5EEFF;color:#1A3E8A}
+.badge-J{background:#E7FAF0;color:#0F5C35}
+.badge-K{background:#FFF0E5;color:#7D3500}
+.badge-L{background:#F0EEFF;color:#4530AA}
+.badge-r32{background:#E8F5EE;color:#0F5C2E}
+.badge-r16{background:#D4EDDA;color:#0A3D1F}
+.badge-qf{background:var(--gold-pale);color:#7A5000}
+.badge-sf{background:#FFF0CC;color:#8B5E00}
+.badge-3p{background:var(--gray-100);color:var(--gray-600)}
+.badge-f{background:var(--green-deep);color:var(--gold-light)}
+
+/* ===== GROUPS ===== */
+.groups-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.group-card{background:var(--white);border:1px solid var(--gray-200);border-radius:12px;overflow:hidden;transition:box-shadow 0.15s}
+.group-card:hover{box-shadow:0 4px 16px rgba(10,61,31,0.10)}
+.group-header{
+  background:var(--green-dark);padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.group-letter{font-family:var(--mono);font-size:22px;font-weight:600;color:var(--gold)}
+.group-label{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.1em;text-transform:uppercase}
+.group-team{
+  padding:8px 16px;font-size:13px;
+  border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;gap:8px;
+}
+.group-team:last-child{border-bottom:none}
+
+/* ===== BRACKET ===== */
+.bracket-wrap{overflow-x:auto;padding-bottom:8px}
+.bracket-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.bl-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-600)}
+.bl-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.bracket-inner{display:flex;gap:0;align-items:stretch;min-width:1200px}
+.bcol{display:flex;flex-direction:column;justify-content:space-around}
+.bcol-r32{flex:0 0 168px}
+.bcol-r16{flex:0 0 152px}
+.bcol-qf{flex:0 0 136px}
+.bcol-sf{flex:0 0 124px}
+.bcol-center{flex:0 0 148px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:0 4px}
+.bcol-arr{flex:0 0 14px;display:flex;flex-direction:column;justify-content:space-around;align-items:center}
+.barr{color:#c8d8c8;font-size:12px;line-height:1}
+.barr-flip{transform:scaleX(-1);display:inline-block}
+/* match card */
+.bcard{
+  margin:2px 4px;border-radius:5px;overflow:hidden;
+  border:1px solid rgba(0,0,0,0.10);background:var(--white);
+  font-size:11px;flex-shrink:0;
+}
+.bcard-hd{
+  padding:3px 7px;font-size:9px;font-family:var(--mono);
+  color:rgba(255,255,255,0.9);letter-spacing:0.03em;
+}
+.bcard-team{
+  padding:5px 7px;border-bottom:1px solid var(--gray-100);
+  display:flex;align-items:center;gap:4px;min-height:25px;
+}
+.bcard-team:last-child{border-bottom:none}
+.bcard-num{font-size:9px;color:var(--gray-400);font-family:var(--mono);min-width:18px;flex-shrink:0}
+.bcard-name{font-size:11px;font-weight:500;color:var(--gray-800);line-height:1.2}
+/* colors per round */
+.bc-r32 .bcard-hd{background:#1565C0}
+.bc-r16 .bcard-hd{background:#6A1B9A}
+.bc-qf  .bcard-hd{background:#E65100}
+.bc-sf  .bcard-hd{background:#B71C1C}
+/* center trophy & final */
+.trophy-wrap{text-align:center}
+.final-box{
+  background:var(--green-deep);border-radius:8px;padding:10px 12px;
+  text-align:center;width:140px;border:2px solid var(--gold);
+}
+.final-box .fb-date{font-size:9px;font-family:var(--mono);color:rgba(255,255,255,0.45);margin-bottom:4px}
+.final-box .fb-title{font-size:12px;font-weight:700;color:var(--gold-light)}
+.final-box .fb-venue{font-size:9px;color:rgba(255,255,255,0.35);margin-top:4px;font-family:var(--mono)}
+.third-box{
+  background:var(--white);border-radius:7px;padding:7px 10px;
+  text-align:center;width:140px;border:1px solid var(--gray-200);
+}
+.third-box .tb-title{font-size:9px;color:var(--gray-400);font-family:var(--mono);margin-bottom:2px}
+.third-box .tb-date{font-size:11px;font-weight:600;color:var(--gray-800)}
+.third-box .tb-venue{font-size:9px;color:var(--gray-400);font-family:var(--mono)}
+
+/* ===== BALL SVG ===== */
+.hero-ball{opacity:0.12;position:absolute;right:-40px;top:50%;transform:translateY(-50%);width:280px;height:280px}
+
+/* ===== EMPTY ===== */
+.empty-row td{text-align:center;padding:40px;color:var(--gray-400);font-size:13px}
+
+/* ===== FOOTER ===== */
+.footer{
+  background:var(--green-deep);
+  padding:16px 24px;text-align:center;
+  font-size:11px;color:rgba(255,255,255,0.35);font-family:var(--mono);
+  letter-spacing:0.05em;
+}
+
+@media(max-width:640px){
+  .hero-title{font-size:28px}
+  .stat-num{font-size:22px}
+  .stat{padding:12px 14px}
+  .ko-stat{padding:8px 14px}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <!-- decorative ball -->
+  <svg class="hero-ball" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="95" fill="none" stroke="white" stroke-width="2"/>
+    <polygon points="100,20 120,55 158,55 128,78 138,115 100,92 62,115 72,78 42,55 80,55" fill="none" stroke="white" stroke-width="2"/>
+    <polygon points="100,92 62,115 72,78" fill="none" stroke="white" stroke-width="1.5"/>
+    <polygon points="100,92 138,115 128,78" fill="none" stroke="white" stroke-width="1.5"/>
+    <circle cx="100" cy="100" r="14" fill="none" stroke="white" stroke-width="1.5"/>
+  </svg>
+
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">FIFA World Cup™ 2026</div>
+      <h1 class="hero-title">ตารางแข่งขัน<br><span>บอลโลก 2026</span></h1>
+      <p class="hero-subtitle">11 มิถุนายน – 20 กรกฎาคม 2026 · เวลาไทย (UTC+7)</p>
+      <div class="hero-hosts" style="margin-top:14px">
+        <span class="host-flag">🇺🇸</span>
+        <span class="host-sep">·</span>
+        <span class="host-flag">🇲🇽</span>
+        <span class="host-sep">·</span>
+        <span class="host-flag">🇨🇦</span>
+        <span style="font-size:12px;color:rgba(255,255,255,0.4);margin-left:6px">USA · Mexico · Canada</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num">104</div><div class="stat-label">นัดแข่งขัน</div></div>
+        <div class="stat"><div class="stat-num">48</div><div class="stat-label">ทีม</div></div>
+        <div class="stat"><div class="stat-num">12</div><div class="stat-label">กลุ่ม</div></div>
+        <div class="stat"><div class="stat-num">16</div><div class="stat-label">สนาม</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+<div class="pitch-bar"></div>
+
+<div class="container">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('matches',this)">⚽ ตารางแข่ง</button>
+    <button class="tab-btn" onclick="switchTab('groups',this)">🏆 กลุ่ม A–L</button>
+    <button class="tab-btn" onclick="switchTab('knockout',this)">🔥 น็อคเอาท์</button>
+  </div>
+
+  <!-- TAB MATCHES -->
+  <div id="tab-matches" class="tab-panel active">
+    <div class="filter-bar">
+      <input type="text" id="searchInput" placeholder="🔍  ค้นหาทีม หรือเมือง..." oninput="filterMatches()"/>
+      <select id="stageFilter" onchange="filterMatches()">
+        <option value="">ทุกรอบ</option>
+        <option value="group">รอบแบ่งกลุ่ม</option>
+        <option value="R32">รอบ 32 ทีม</option>
+        <option value="R16">รอบ 16 ทีม</option>
+        <option value="QF">รอบก่อนรองชนะเลิศ</option>
+        <option value="SF">รอบรองชนะเลิศ</option>
+        <option value="3P">ชิงที่ 3</option>
+        <option value="F">รอบชิงชนะเลิศ</option>
+      </select>
+      <select id="groupFilter" onchange="filterMatches()">
+        <option value="">ทุกกลุ่ม</option>
+        <option>A</option><option>B</option><option>C</option><option>D</option>
+        <option>E</option><option>F</option><option>G</option><option>H</option>
+        <option>I</option><option>J</option><option>K</option><option>L</option>
+      </select>
+      <span class="count-label" id="matchCount">104 นัด</span>
+    </div>
+    <div class="table-wrap">
+      <div class="scroll-x">
+        <table>
+          <thead><tr>
+            <th class="col-num">#</th>
+            <th class="col-date">วันที่</th>
+            <th class="col-time">เวลาไทย</th>
+            <th class="col-teams">คู่แข่งขัน</th>
+            <th class="col-stage">รอบ</th>
+            <th class="col-city">เมือง</th>
+          </tr></thead>
+          <tbody id="matchBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <p style="margin-top:10px;font-size:11px;color:var(--gray-400);font-family:var(--mono)">เวลาไทย UTC+7 · ข้อมูลจาก roadtrips.com</p>
+  </div>
+
+  <!-- TAB GROUPS -->
+  <div id="tab-groups" class="tab-panel">
+    <div class="groups-grid" id="groupsGrid"></div>
+  </div>
+
+  <!-- TAB KNOCKOUT -->
+  <div id="tab-knockout" class="tab-panel">
+    <div class="bracket-legend">
+      <div class="bl-item"><div class="bl-dot" style="background:#1565C0"></div>รอบ 32 ทีม</div>
+      <div class="bl-item"><div class="bl-dot" style="background:#6A1B9A"></div>รอบ 16 ทีม</div>
+      <div class="bl-item"><div class="bl-dot" style="background:#E65100"></div>รอบก่อนรองชนะเลิศ</div>
+      <div class="bl-item"><div class="bl-dot" style="background:#B71C1C"></div>รอบรองชนะเลิศ</div>
+      <div class="bl-item"><div class="bl-dot" style="background:#0A3D1F"></div>รอบชิงชนะเลิศ</div>
+      <span style="font-size:10px;color:var(--gray-400);font-family:var(--mono);margin-left:auto">← เลื่อนดูได้</span>
+    </div>
+    <div class="bracket-wrap">
+      <div id="bracketInner" class="bracket-inner"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">⚽ FIFA WORLD CUP 2026™ · USA · MEXICO · CANADA · ข้อมูลอ้างอิงจาก roadtrips.com</footer>
+
+<script>
+const groups={
+  A:{teams:['🇲🇽 Mexico','🇿🇦 South Africa','🇰🇷 Korea Republic','🇨🇿 Czechia']},
+  B:{teams:['🇨🇦 Canada','🇨🇭 Switzerland','🇶🇦 Qatar','🇧🇦 Bosnia & Herz.']},
+  C:{teams:['🇧🇷 Brazil','🇲🇦 Morocco','🇭🇹 Haiti','🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scotland']},
+  D:{teams:['🇺🇸 United States','🇵🇾 Paraguay','🇦🇺 Australia','🇹🇷 Türkiye']},
+  E:{teams:['🇩🇪 Germany','🇨🇼 Curaçao','🇨🇮 Côte d\'Ivoire','🇪🇨 Ecuador']},
+  F:{teams:['🇳🇱 Netherlands','🇯🇵 Japan','🇹🇳 Tunisia','🇸🇪 Sweden']},
+  G:{teams:['🇧🇪 Belgium','🇪🇬 Egypt','🇮🇷 Iran','🇳🇿 New Zealand']},
+  H:{teams:['🇪🇸 Spain','🇨🇻 Cabo Verde','🇸🇦 Saudi Arabia','🇺🇾 Uruguay']},
+  I:{teams:['🇫🇷 France','🇸🇳 Senegal','🇳🇴 Norway','🇮🇶 Iraq']},
+  J:{teams:['🇦🇷 Argentina','🇩🇿 Algeria','🇦🇹 Austria','🇯🇴 Jordan']},
+  K:{teams:['🇵🇹 Portugal','🇺🇿 Uzbekistan','🇨🇴 Colombia','🇨🇩 Congo DR']},
+  L:{teams:['🏴󠁧󠁢󠁥󠁮󠁧󠁿 England','🇭🇷 Croatia','🇬🇭 Ghana','🇵🇦 Panama']},
+};
+
+const matches=[
+  [1,'12 มิ.ย.','02:00','Mexico v South Africa','group','A','Mexico City'],
+  [2,'12 มิ.ย.','09:00','South Korea v Czechia','group','A','Guadalajara'],
+  [3,'13 มิ.ย.','02:00','Canada v Bosnia & Herz.','group','B','Toronto'],
+  [4,'13 มิ.ย.','08:00','USA v Paraguay','group','D','Los Angeles'],
+  [5,'14 มิ.ย.','08:00','Haiti v Scotland','group','C','Boston'],
+  [6,'14 มิ.ย.','11:00','Australia v Türkiye','group','D','Vancouver'],
+  [7,'14 มิ.ย.','05:00','Brazil v Morocco','group','C','New York/NJ'],
+  [8,'14 มิ.ย.','02:00','Qatar v Switzerland','group','B','San Francisco'],
+  [9,'15 มิ.ย.','06:00','Ivory Coast v Ecuador','group','E','Philadelphia'],
+  [10,'15 มิ.ย.','00:00','Germany v Curaçao','group','E','Houston'],
+  [11,'15 มิ.ย.','03:00','Netherlands v Japan','group','F','Dallas'],
+  [12,'15 มิ.ย.','09:00','Sweden v Tunisia','group','F','Monterrey'],
+  [13,'16 มิ.ย.','05:00','Saudi Arabia v Uruguay','group','H','Miami'],
+  [14,'15 มิ.ย.','23:00','Spain v Cape Verde','group','H','Atlanta'],
+  [15,'16 มิ.ย.','08:00','Iran v New Zealand','group','G','Los Angeles'],
+  [16,'16 มิ.ย.','02:00','Belgium v Egypt','group','G','Seattle'],
+  [17,'17 มิ.ย.','02:00','France v Senegal','group','I','New York/NJ'],
+  [18,'17 มิ.ย.','05:00','Iraq v Norway','group','I','Boston'],
+  [19,'17 มิ.ย.','08:00','Argentina v Algeria','group','J','Kansas City'],
+  [20,'17 มิ.ย.','11:00','Austria v Jordan','group','J','San Francisco'],
+  [21,'18 มิ.ย.','06:00','Ghana v Panama','group','L','Toronto'],
+  [22,'18 มิ.ย.','03:00','England v Croatia','group','L','Dallas'],
+  [23,'18 มิ.ย.','00:00','Portugal v Congo DR','group','K','Houston'],
+  [24,'18 มิ.ย.','09:00','Uzbekistan v Colombia','group','K','Mexico City'],
+  [25,'18 มิ.ย.','23:00','Czechia v South Africa','group','A','Atlanta'],
+  [26,'19 มิ.ย.','02:00','Switzerland v Bosnia & Herz.','group','B','Los Angeles'],
+  [27,'19 มิ.ย.','05:00','Canada v Qatar','group','B','Vancouver'],
+  [28,'19 มิ.ย.','08:00','Mexico v South Korea','group','A','Guadalajara'],
+  [29,'20 มิ.ย.','08:00','Brazil v Haiti','group','C','Philadelphia'],
+  [30,'20 มิ.ย.','05:00','Scotland v Morocco','group','C','Boston'],
+  [31,'20 มิ.ย.','10:00','Türkiye v Paraguay','group','D','San Francisco'],
+  [32,'20 มิ.ย.','02:00','USA v Australia','group','D','Seattle'],
+  [33,'21 มิ.ย.','03:00','Germany v Ivory Coast','group','E','Toronto'],
+  [34,'21 มิ.ย.','07:00','Ecuador v Curaçao','group','E','Kansas City'],
+  [35,'21 มิ.ย.','00:00','Netherlands v Sweden','group','F','Houston'],
+  [36,'21 มิ.ย.','11:00','Tunisia v Japan','group','F','Monterrey'],
+  [37,'22 มิ.ย.','05:00','Uruguay v Cape Verde','group','H','Miami'],
+  [38,'21 มิ.ย.','23:00','Spain v Saudi Arabia','group','H','Atlanta'],
+  [39,'22 มิ.ย.','02:00','Belgium v Iran','group','G','Los Angeles'],
+  [40,'22 มิ.ย.','08:00','New Zealand v Egypt','group','G','Vancouver'],
+  [41,'23 มิ.ย.','07:00','Norway v Senegal','group','I','New York/NJ'],
+  [42,'23 มิ.ย.','04:00','France v Iraq','group','I','Philadelphia'],
+  [43,'23 มิ.ย.','00:00','Argentina v Austria','group','J','Dallas'],
+  [44,'23 มิ.ย.','10:00','Jordan v Algeria','group','J','San Francisco'],
+  [45,'24 มิ.ย.','03:00','England v Ghana','group','L','Boston'],
+  [46,'24 มิ.ย.','06:00','Panama v Croatia','group','L','Toronto'],
+  [47,'24 มิ.ย.','00:00','Portugal v Uzbekistan','group','K','Houston'],
+  [48,'24 มิ.ย.','09:00','Colombia v Congo DR','group','K','Guadalajara'],
+  [49,'25 มิ.ย.','05:00','Scotland v Brazil','group','C','Miami'],
+  [50,'25 มิ.ย.','05:00','Morocco v Haiti','group','C','Atlanta'],
+  [51,'25 มิ.ย.','02:00','Switzerland v Canada','group','B','Vancouver'],
+  [52,'25 มิ.ย.','02:00','Bosnia & Herz. v Qatar','group','B','Seattle'],
+  [53,'25 มิ.ย.','08:00','Czechia v Mexico','group','A','Mexico City'],
+  [54,'25 มิ.ย.','08:00','South Africa v South Korea','group','A','Monterrey'],
+  [55,'26 มิ.ย.','03:00','Curaçao v Ivory Coast','group','E','Philadelphia'],
+  [56,'26 มิ.ย.','03:00','Ecuador v Germany','group','E','New York/NJ'],
+  [57,'26 มิ.ย.','06:00','Japan v Sweden','group','F','Dallas'],
+  [58,'26 มิ.ย.','06:00','Tunisia v Netherlands','group','F','Kansas City'],
+  [59,'26 มิ.ย.','09:00','Türkiye v USA','group','D','Los Angeles'],
+  [60,'26 มิ.ย.','09:00','Paraguay v Australia','group','D','San Francisco'],
+  [61,'27 มิ.ย.','02:00','Norway v France','group','I','Boston'],
+  [62,'27 มิ.ย.','02:00','Senegal v Iraq','group','I','Toronto'],
+  [63,'27 มิ.ย.','10:00','Egypt v Iran','group','G','Seattle'],
+  [64,'27 มิ.ย.','10:00','New Zealand v Belgium','group','G','Vancouver'],
+  [65,'27 มิ.ย.','07:00','Cape Verde v Saudi Arabia','group','H','Houston'],
+  [66,'27 มิ.ย.','07:00','Uruguay v Spain','group','H','Guadalajara'],
+  [67,'28 มิ.ย.','04:00','Panama v England','group','L','New York/NJ'],
+  [68,'28 มิ.ย.','04:00','Croatia v Ghana','group','L','Philadelphia'],
+  [69,'28 มิ.ย.','09:00','Algeria v Austria','group','J','Kansas City'],
+  [70,'28 มิ.ย.','09:00','Jordan v Argentina','group','J','Dallas'],
+  [71,'28 มิ.ย.','06:30','Colombia v Portugal','group','K','Miami'],
+  [72,'28 มิ.ย.','06:30','Congo DR v Uzbekistan','group','K','Atlanta'],
+  [73,'29 มิ.ย.','02:00','กลุ่ม A อันดับ 2 v กลุ่ม B อันดับ 2','R32','','Los Angeles'],
+  [74,'30 มิ.ย.','03:30','ชนะกลุ่ม E v อันดับ 3 ที่ดีที่สุด (A/B/C/D/F)','R32','','Boston'],
+  [75,'30 มิ.ย.','08:00','ชนะกลุ่ม F v กลุ่ม C อันดับ 2','R32','','Monterrey'],
+  [76,'30 มิ.ย.','00:00','ชนะกลุ่ม C v กลุ่ม F อันดับ 2','R32','','Houston'],
+  [77,'1 ก.ค.','04:00','ชนะกลุ่ม I v อันดับ 3 ที่ดีที่สุด (C/D/F/G/H)','R32','','New York/NJ'],
+  [78,'1 ก.ค.','00:00','กลุ่ม E อันดับ 2 v กลุ่ม I อันดับ 2','R32','','Dallas'],
+  [79,'1 ก.ค.','08:00','ชนะกลุ่ม A v อันดับ 3 ที่ดีที่สุด (C/E/F/H/I)','R32','','Mexico City'],
+  [80,'1 ก.ค.','23:00','ชนะกลุ่ม L v อันดับ 3 ที่ดีที่สุด (E/H/I/J/K)','R32','','Atlanta'],
+  [81,'2 ก.ค.','07:00','ชนะกลุ่ม D v อันดับ 3 ที่ดีที่สุด (B/E/F/I/J)','R32','','San Francisco'],
+  [82,'2 ก.ค.','03:00','ชนะกลุ่ม G v อันดับ 3 ที่ดีที่สุด (A/E/H/I/J)','R32','','Seattle'],
+  [83,'3 ก.ค.','06:00','กลุ่ม K อันดับ 2 v กลุ่ม L อันดับ 2','R32','','Toronto'],
+  [84,'3 ก.ค.','02:00','ชนะกลุ่ม H v กลุ่ม J อันดับ 2','R32','','Los Angeles'],
+  [85,'3 ก.ค.','10:00','ชนะกลุ่ม B v อันดับ 3 ที่ดีที่สุด (E/F/G/I/J)','R32','','Vancouver'],
+  [86,'4 ก.ค.','05:00','ชนะกลุ่ม J v กลุ่ม H อันดับ 2','R32','','Miami'],
+  [87,'4 ก.ค.','08:30','ชนะกลุ่ม K v อันดับ 3 ที่ดีที่สุด (D/E/I/J/L)','R32','','Kansas City'],
+  [88,'4 ก.ค.','01:00','กลุ่ม D อันดับ 2 v กลุ่ม G อันดับ 2','R32','','Dallas'],
+  [89,'5 ก.ค.','04:00','ผู้ชนะ M74 v ผู้ชนะ M77','R16','','Philadelphia'],
+  [90,'5 ก.ค.','00:00','ผู้ชนะ M73 v ผู้ชนะ M75','R16','','Houston'],
+  [91,'6 ก.ค.','03:00','ผู้ชนะ M76 v ผู้ชนะ M78','R16','','New York/NJ'],
+  [92,'6 ก.ค.','07:00','ผู้ชนะ M79 v ผู้ชนะ M80','R16','','Mexico City'],
+  [93,'7 ก.ค.','02:00','ผู้ชนะ M83 v ผู้ชนะ M84','R16','','Dallas'],
+  [94,'7 ก.ค.','07:00','ผู้ชนะ M81 v ผู้ชนะ M82','R16','','Seattle'],
+  [95,'7 ก.ค.','23:00','ผู้ชนะ M86 v ผู้ชนะ M88','R16','','Atlanta'],
+  [96,'8 ก.ค.','03:00','ผู้ชนะ M85 v ผู้ชนะ M87','R16','','Vancouver'],
+  [97,'10 ก.ค.','03:00','ผู้ชนะ M89 v ผู้ชนะ M90','QF','','Boston'],
+  [98,'11 ก.ค.','02:00','ผู้ชนะ M93 v ผู้ชนะ M94','QF','','Los Angeles'],
+  [99,'12 ก.ค.','04:00','ผู้ชนะ M91 v ผู้ชนะ M92','QF','','Miami'],
+  [100,'12 ก.ค.','08:00','ผู้ชนะ M95 v ผู้ชนะ M96','QF','','Kansas City'],
+  [101,'15 ก.ค.','02:00','ผู้ชนะ M97 v ผู้ชนะ M98','SF','','Dallas'],
+  [102,'16 ก.ค.','02:00','ผู้ชนะ M99 v ผู้ชนะ M100','SF','','Atlanta'],
+  [103,'19 ก.ค.','04:00','แพ้ M101 v แพ้ M102','3P','','Miami'],
+  [104,'20 ก.ค.','02:00','ผู้ชนะ M101 v ผู้ชนะ M102','F','','New York/NJ'],
+];
+
+const flags={
+  'Mexico':'mx','South Africa':'za','Korea Republic':'kr','South Korea':'kr','Czechia':'cz',
+  'Canada':'ca','Switzerland':'ch','Qatar':'qa','Bosnia & Herz.':'ba','Bosnia and Herzegovina':'ba',
+  'Brazil':'br','Morocco':'ma','Haiti':'ht','Scotland':'gb-sct',
+  'United States':'us','USA':'us','Paraguay':'py','Australia':'au','Turkiye':'tr','Türkiye':'tr',
+  'Germany':'de','Curacoo':'cw','Curaçao':'cw','Ivory Coast':'ci','Ecuador':'ec',
+  'Netherlands':'nl','Japan':'jp','Tunisia':'tn','Sweden':'se',
+  'Belgium':'be','Egypt':'eg','Iran':'ir','New Zealand':'nz',
+  'Spain':'es','Cabo Verde':'cv','Cape Verde':'cv','Saudi Arabia':'sa','Uruguay':'uy',
+  'France':'fr','Senegal':'sn','Norway':'no','Iraq':'iq',
+  'Argentina':'ar','Algeria':'dz','Austria':'at','Jordan':'jo',
+  'Portugal':'pt','Uzbekistan':'uz','Colombia':'co','Congo DR':'cd',
+  'England':'gb-eng','Croatia':'hr','Ghana':'gh','Panama':'pa',
+};
+function flagImg(code){
+  return `<img src="https://flagcdn.com/20x15/${code}.png" width="20" height="15" style="vertical-align:middle;border-radius:2px;margin-right:5px;flex-shrink:0" onerror="this.style.display='none'">`;
+}
+function flagTeam(name){
+  const code=flags[name.trim()];
+  return code ? `<span style="display:inline-flex;align-items:center;gap:0">${flagImg(code)}${name}</span>` : name;
+}
+function formatMatchup(teams){
+  if(!teams.includes(' v ')) return teams;
+  const idx=teams.indexOf(' v ');
+  const t1=teams.substring(0,idx).trim();
+  const t2=teams.substring(idx+3).trim();
+  return `<span style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap">${flagTeam(t1)}<span style="color:var(--gray-400);font-weight:400;font-size:11px">v</span>${flagTeam(t2)}</span>`;
+}
+function stageBadge(s,g){
+  if(s==='group') return `<span class="badge badge-${g}">กลุ่ม ${g}</span>`;
+  if(s==='R32') return `<span class="badge badge-r32">รอบ 32</span>`;
+  if(s==='R16') return `<span class="badge badge-r16">รอบ 16</span>`;
+  if(s==='QF')  return `<span class="badge badge-qf">รอบ 8</span>`;
+  if(s==='SF')  return `<span class="badge badge-sf">รอบรอง</span>`;
+  if(s==='3P')  return `<span class="badge badge-3p">อันดับ 3</span>`;
+  if(s==='F')   return `<span class="badge badge-f">⭐ รอบชิง</span>`;
+  return '';
+}
+
+function filterMatches(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const st=document.getElementById('stageFilter').value;
+  const gr=document.getElementById('groupFilter').value;
+  const filtered=matches.filter(m=>{
+    const okSt=st?m[4]===st:true;
+    const okGr=gr?m[5]===gr:true;
+    const okQ=q?(m[3].toLowerCase().includes(q)||m[6].toLowerCase().includes(q)):true;
+    return okSt&&okGr&&okQ;
+  });
+  document.getElementById('matchCount').textContent=filtered.length+' นัด';
+  const body=document.getElementById('matchBody');
+  if(!filtered.length){body.innerHTML='<tr class="empty-row"><td colspan="6">ไม่พบผลลัพธ์ที่ตรงกัน</td></tr>';return;}
+  body.innerHTML=filtered.map(m=>`<tr>
+    <td class="col-num">${m[0]}</td>
+    <td class="col-date">${m[1]}</td>
+    <td class="col-time">${m[2]}</td>
+    <td class="col-teams">${formatMatchup(m[3])}</td>
+    <td class="col-stage">${stageBadge(m[4],m[5])}</td>
+    <td class="col-city">${m[6]}</td>
+  </tr>`).join('');
+}
+
+function buildGroups(){
+  // groups data has emoji in team names already, replace with img flags
+  const gData={
+    A:['Mexico','South Africa','Korea Republic','Czechia'],
+    B:['Canada','Switzerland','Qatar','Bosnia & Herz.'],
+    C:['Brazil','Morocco','Haiti','Scotland'],
+    D:['United States','Paraguay','Australia','Türkiye'],
+    E:['Germany','Curaçao','Ivory Coast','Ecuador'],
+    F:['Netherlands','Japan','Tunisia','Sweden'],
+    G:['Belgium','Egypt','Iran','New Zealand'],
+    H:['Spain','Cabo Verde','Saudi Arabia','Uruguay'],
+    I:['France','Senegal','Norway','Iraq'],
+    J:['Argentina','Algeria','Austria','Jordan'],
+    K:['Portugal','Uzbekistan','Colombia','Congo DR'],
+    L:['England','Croatia','Ghana','Panama'],
+  };
+  document.getElementById('groupsGrid').innerHTML=Object.entries(gData).map(([g,teams])=>`
+    <div class="group-card">
+      <div class="group-header">
+        <span class="group-letter">${g}</span>
+        <span class="group-label">Group ${g}</span>
+      </div>
+      <div>${teams.map(t=>{const c=flags[t]||'';return `<div class="group-team">${c?flagImg(c):''}${t}</div>`;}).join('')}</div>
+    </div>`).join('');
+}
+
+function bcard(id,cls){
+  const m=matches.find(x=>x[0]===id);
+  if(!m) return '';
+  const parts=m[3].split(' v ');
+  const t1=parts[0]?.trim()||'?', t2=parts[1]?.trim()||'?';
+  const c1=flags[t1]||'', c2=flags[t2]||'';
+  const f1=c1?flagImg(c1):'', f2=c2?flagImg(c2):'';
+  return `<div class="bcard ${cls}">
+    <div class="bcard-hd">M${id} · ${m[1]} ${m[2]} · ${m[6]}</div>
+    <div class="bcard-team" style="display:flex;align-items:center;gap:3px"><span class="bcard-num">1</span>${f1}<span class="bcard-name">${t1}</span></div>
+    <div class="bcard-team" style="display:flex;align-items:center;gap:3px"><span class="bcard-num">2</span>${f2}<span class="bcard-name">${t2}</span></div>
+  </div>`;
+}
+function arrs(n,flip=false){
+  return Array.from({length:n},()=>`<div class="barr">${flip?'<span class="barr-flip">›</span>':'›'}</div>`).join('');
+}
+function buildKnockout(){
+  const el=document.getElementById('bracketInner');
+  // Trophy SVG
+  const trophy=`<svg viewBox="0 0 100 130" width="60" style="display:block;margin:0 auto 8px;opacity:.9" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="tg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F2C94C"/><stop offset="50%" style="stop-color:#D4A843"/>
+      <stop offset="100%" style="stop-color:#9A7020"/></linearGradient></defs>
+    <path d="M30,10 Q28,40 20,55 Q14,65 18,70 Q22,75 30,74 Q35,85 50,88 Q65,85 70,74 Q78,75 82,70 Q86,65 80,55 Q72,40 70,10 Z" fill="url(#tg2)" stroke="#B8860B" stroke-width="1.5"/>
+    <path d="M18,30 Q8,30 8,50 Q8,65 18,65" fill="none" stroke="url(#tg2)" stroke-width="5" stroke-linecap="round"/>
+    <path d="M82,30 Q92,30 92,50 Q92,65 82,65" fill="none" stroke="url(#tg2)" stroke-width="5" stroke-linecap="round"/>
+    <rect x="42" y="88" width="16" height="18" fill="url(#tg2)" stroke="#B8860B" stroke-width="1"/>
+    <rect x="28" y="106" width="44" height="8" rx="3" fill="url(#tg2)" stroke="#B8860B" stroke-width="1"/>
+    <rect x="24" y="114" width="52" height="6" rx="3" fill="url(#tg2)" stroke="#B8860B" stroke-width="1"/>
+    <path d="M40,18 Q42,14 48,15 Q52,16 50,22" fill="rgba(255,255,255,0.35)"/>
+  </svg>`;
+
+  el.innerHTML=`
+  <!-- L R32 -->
+  <div class="bcol bcol-r32">
+    ${[73,74,75,76,77,78,79,80].map(id=>bcard(id,'bc-r32')).join('<div style="height:5px"></div>')}
+  </div>
+  <div class="bcol bcol-arr">${arrs(8)}</div>
+  <!-- L R16 -->
+  <div class="bcol bcol-r16" style="justify-content:space-around">
+    ${[90,89,91,92].map(id=>bcard(id,'bc-r16')).join('<div style="height:32px"></div>')}
+  </div>
+  <div class="bcol bcol-arr">${arrs(4)}</div>
+  <!-- L QF -->
+  <div class="bcol bcol-qf" style="justify-content:space-around">
+    ${[97,99].map(id=>bcard(id,'bc-qf')).join('<div style="height:120px"></div>')}
+  </div>
+  <div class="bcol bcol-arr">${arrs(2)}</div>
+  <!-- L SF -->
+  <div class="bcol bcol-sf" style="justify-content:center">
+    ${bcard(101,'bc-sf')}
+  </div>
+  <div class="bcol bcol-arr" style="justify-content:center"><div class="barr">›</div></div>
+
+  <!-- CENTER -->
+  <div class="bcol-center">
+    ${trophy}
+    <div class="final-box">
+      <div class="fb-date">20 ก.ค. 2026 · 02:00 น.</div>
+      <div class="fb-title">⭐ รอบชิงชนะเลิศ</div>
+      <div class="fb-venue">MetLife Stadium<br>New York / NJ</div>
+    </div>
+    <div class="third-box">
+      <div class="tb-title">🥉 ชิงอันดับ 3</div>
+      <div class="tb-date">19 ก.ค. · 04:00 น.</div>
+      <div class="tb-venue">Hard Rock Stadium · Miami</div>
+    </div>
+  </div>
+
+  <!-- R SF -->
+  <div class="bcol-arr" style="flex:0 0 14px;display:flex;align-items:center;justify-content:center"><div class="barr"><span class="barr-flip">›</span></div></div>
+  <div class="bcol bcol-sf" style="justify-content:center">
+    ${bcard(102,'bc-sf')}
+  </div>
+  <div class="bcol bcol-arr">${arrs(2,true)}</div>
+  <!-- R QF -->
+  <div class="bcol bcol-qf" style="justify-content:space-around">
+    ${[98,100].map(id=>bcard(id,'bc-qf')).join('<div style="height:120px"></div>')}
+  </div>
+  <div class="bcol bcol-arr">${arrs(4,true)}</div>
+  <!-- R R16 -->
+  <div class="bcol bcol-r16" style="justify-content:space-around">
+    ${[93,94,95,96].map(id=>bcard(id,'bc-r16')).join('<div style="height:32px"></div>')}
+  </div>
+  <div class="bcol bcol-arr">${arrs(8,true)}</div>
+  <!-- R R32 -->
+  <div class="bcol bcol-r32">
+    ${[88,87,86,85,84,83,82,81].map(id=>bcard(id,'bc-r32')).join('<div style="height:5px"></div>')}
+  </div>`;
+}
+
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+filterMatches();buildGroups();buildKnockout();
+</script>
+</body>
+</html>
