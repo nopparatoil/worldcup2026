@@ -159,6 +159,21 @@
     header{flex-direction:column}
     .pts-legend{text-align:left}
   }
+
+  /* ── Lock Banner ── */
+  .lock-banner{
+    background:linear-gradient(90deg,#3a0000,#ce1126,#3a0000);
+    color:#fff;border-radius:10px;padding:12px 18px;
+    font-weight:700;font-size:14px;text-align:center;
+    margin-bottom:16px;box-shadow:0 0 16px rgba(206,17,38,.5);
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .locked select,.locked input[type=text]{
+    opacity:.4;cursor:not-allowed;pointer-events:none;
+  }
+  .locked button.btn-primary,.locked button.btn-save,.locked button.btn-sm{
+    opacity:.4;cursor:not-allowed;pointer-events:none;
+  }
 </style>
 </head>
 <body>
@@ -578,6 +593,31 @@ function removePlayer(id) {
 
 // ─── Start ───────────────────────────────────────
 init();
+
+// ─── Lock after deadline ─────────────────────────
+const LOCK_DATE = new Date('2026-06-26T23:59:59+07:00'); // วันศุกร์ที่ 26 มิ.ย. 2026
+
+function checkLock() {
+  const now = new Date();
+  if(now >= LOCK_DATE) {
+    // Add locked class to predict tab
+    const predictPage = document.getElementById('page-predict');
+    if(predictPage) predictPage.classList.add('locked');
+
+    // Show banner
+    const card = predictPage ? predictPage.querySelector('.card') : null;
+    if(card && !document.getElementById('lock-banner')) {
+      const banner = document.createElement('div');
+      banner.id = 'lock-banner';
+      banner.className = 'lock-banner';
+      banner.innerHTML = '🔒 หมดเวลาทาย — ปิดรับการทายแล้ว (หลัง 26 มิ.ย. 2026)';
+      card.insertBefore(banner, card.firstChild);
+    }
+  }
+}
+
+checkLock();
+
 </script>
 </body>
 </html>
