@@ -376,9 +376,14 @@ async function loadFromSheets() {
     const d = await r.json();
     if(d.error) throw new Error(d.error);
 
-    // Load players
+    // Load players (deduplicate by name — keep last entry)
     if(d.players && d.players.length > 0) {
-      players = d.players.map(p => ({...p, picks: p.picks || ['','','','','']}));
+      const seen = {};
+      const deduped = [];
+      for(const p of d.players) {
+        seen[p.name] = {...p, picks: p.picks || ['','','','','']};
+      }
+      players = Object.values(seen);
       nextId = Math.max(...players.map(p=>p.id)) + 1;
       sanitizePlayers();
     }
