@@ -412,6 +412,9 @@ async function saveToSheets() {
     const d = await r.json();
     if(d.error) throw new Error(d.error);
     setStatus('ok', '✅ บันทึกเรียบร้อย (' + new Date().toLocaleTimeString('th-TH') + ')');
+    renderPredict(); renderResults();
+    const active = document.querySelector('.tab.active');
+    if(active && active.textContent.includes('คะแนน')) renderBoard();
   } catch(e) {
     setStatus('err', '❌ บันทึกไม่ได้: ' + e.message);
   }
@@ -575,6 +578,8 @@ function setResult(team, round, val) {
     ROUNDS.slice(ri+1).forEach(r=>{TR[team][r]='';});
   }
   renderResults(); renderPredict();
+  const active = document.querySelector('.tab.active');
+  if(active && active.textContent.includes('คะแนน')) renderBoard();
 }
 
 function addPlayer() {
